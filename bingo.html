@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Bingo</title>
+    
+    <style type="text/css">
+        body * { font-family: Palatino, Georgia, serif;}
+        #container {
+            position: absolute;
+            display: table;
+        }
+        #board {
+            background-color: #334;
+            padding: 0.5em;
+            border-radius: 10px;
+        }
+        .selected { background: #C2A5CF }
+        .unselected { background: #F7F7F7 }
+        .bingo-row { width: 100%; }
+        .bingo-col, .bingo-center {
+            padding: 5px;
+            text-align: center;
+            width: 10em;
+            max-width: 10em;
+            height: 6em;
+            margin: 0.5em;
+            border-radius: 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .bingo-row div { border: 1px dotted white }
+        .bingo-row div span {
+        }
+        .bingo-center { background: #C2A5CF; color: #fff }
+    </style>
+</head>
+<body onload="">
+    <div id="container">
+        <div id="board"></div>
+    </div>
+<script src="http://code.jquery.com/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+$(function () {
+    jQuery.fn.center = function() {
+        this.css("top", $(window)
+            .height() / 2 - this.height() / 2 + "px");
+        this.css("left", $(window)
+            .width() / 2 - this.width() / 2 + "px");
+        return this;
+    }
+    $.ajax({
+        url: "http://api.openkeyval.org/shirmbingotest",
+        dataType: 'jsonp',
+        success: function (json) {
+            var dim = 5;
+            var board = new Array();
+            for (var i = 0; i < dim; i++) {
+                var row = new Array();
+                for (var j = 0; j < dim; j++) {
+                    row.push("");
+                }
+                board.push(row);
+            }
+            var options = json.split(/;/);
+            var target = $("#board");
+            target.empty();
+            for (var i=0; i < board.length; i++) {
+                var row = $('<div></div>');
+                row.addClass("bingo-row");
+                for (var j = 0; j < board[i].length; j++) {
+                    var col = $("<div></div>");
+                    if (i == 2 && j == 2) {
+                        col.html("<span>Free Square!</span>");
+                        col.addClass("bingo-center");
+                    } else {
+                        var index = Math.floor(Math.random() * (options.length - 1));
+                        var str = options.splice(index, 1);
+                        col.html("<span>"+str+"</span>");
+                        col.addClass("bingo-col");
+                        col.addClass("unselected");
+                    }
+                    row.append(col);
+                }
+                target.append(row);
+            };
+            $("#board").center();
+            $(".bingo-col").center();
+            $("span").center();
+            $("#board div.bingo-col").on('click', function () {
+                $(this).toggleClass('unselected');
+                $(this).toggleClass('selected');
+            });
+        }
+    });
+})
+</script>
+</body>
