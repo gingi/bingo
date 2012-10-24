@@ -1,44 +1,41 @@
 <!DOCTYPE html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap-combined.min.css" type="text/css" charset="utf-8">
     <title>Bingo</title>
     
     <style type="text/css">
         body * { font-family: Palatino, Georgia, serif;}
-        #container {
-            position: absolute;
-            display: table;
-        }
         #board {
-            background-color: #334;
-            padding: 0.5em;
+/*            background-color: #334;*/
             border-radius: 10px;
         }
-        .selected { background: #C2A5CF }
+/*        .selected { background: #C2A5CF }
         .unselected { background: #F7F7F7 }
-        .bingo-row { width: 100%; }
-        .bingo-col, .bingo-center {
-            padding: 5px;
-            text-align: center;
+*/        .bingo-cell, .bingo-center {
             width: 10em;
-            max-width: 10em;
-            height: 6em;
-            margin: 0.5em;
+            height: 8em;
             border-radius: 5px;
             display: inline-block;
+            margin: 0.2em;
             vertical-align: middle;
+            font-size: 11pt;
         }
-        .bingo-row div { border: 1px dotted white }
-        .bingo-row div span {
-        }
-        .bingo-center { background: #C2A5CF; color: #fff }
+/*        .bingo-center { background: #C2A5CF; color: #fff }*/
     </style>
 </head>
 <body onload="">
-    <div id="container">
-        <div id="board"></div>
+    <div class="container">
+        <div class="offset1 span10">
+            <div id="board"></div>
+        </div>
     </div>
-<script src="http://code.jquery.com/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <div class="span4 offset5" style="text-align:center">
+            <a class="btn btn-info" href="?board=warelab">Ware Lab</a>
+            <a class="btn btn-info" href="?board=kbase">KBase</a>
+        </div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]"); // Sanitize
@@ -68,7 +65,7 @@ $(function () {
             for (var i = 0; i < dim; i++) {
                 var row = new Array();
                 for (var j = 0; j < dim; j++) {
-                    row.push("");
+                    row.push(null);
                 }
                 board.push(row);
             }
@@ -79,27 +76,29 @@ $(function () {
                 var row = $('<div></div>');
                 row.addClass("bingo-row");
                 for (var j = 0; j < board[i].length; j++) {
-                    var col = $("<div></div>");
+                    var col = $("<button></button>");
+                    col.addClass("btn");
+                    col.addClass("btn-large");
+                    col.addClass("btn-block");
                     if (i == 2 && j == 2) {
-                        col.html("<span>Free Square!</span>");
+                        col.html("Free Square!");
                         col.addClass("bingo-center");
+                        col.addClass("disabled");
+                        col.addClass("btn-danger");
                     } else {
                         var index = Math.floor(Math.random() * (options.length - 1));
                         var str = options.splice(index, 1);
-                        col.html("<span>"+str+"</span>");
-                        col.addClass("bingo-col");
+                        col.html(str);
+                        col.addClass("bingo-cell");
                         col.addClass("unselected");
                     }
                     row.append(col);
                 }
                 target.append(row);
             };
-            $("#board").center();
-            $(".bingo-col").center();
-            $("span").center();
-            $("#board div.bingo-col").on('click', function () {
-                $(this).toggleClass('unselected');
-                $(this).toggleClass('selected');
+            $(".bingo-row").center();
+            $("#board .bingo-cell").on('click', function () {
+                $(this).toggleClass('btn-danger');
             });
         }
     });
